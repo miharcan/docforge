@@ -294,6 +294,13 @@ def main() -> None:
     
     ALLOW_PREFIXES = ("ci/",)   # v1: CI only
     DROP_FILENAMES = {"index.md"}
+    KEEP_INDEX = {
+        "ci/caching/index.md",
+        "ci/yaml/index.md",
+        "ci/variables/index.md",
+        "ci/jobs/index.md",
+        "ci/runners/index.md",
+    }
 
     
     n = 0
@@ -301,7 +308,8 @@ def main() -> None:
         # GitLab markdown
         for md in gitlab_root.rglob("*.md"):
             rel = md.relative_to(gitlab_root).as_posix()  # path inside doc/
-            if md.name.lower() in DROP_FILENAMES:
+            # if md.name.lower() in DROP_FILENAMES:
+            if md.name.lower() in DROP_FILENAMES and rel not in KEEP_INDEX:
                 continue
             if not rel.startswith(ALLOW_PREFIXES):
                 continue
