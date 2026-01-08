@@ -38,4 +38,103 @@ It currently supports:
 python -m venv .venv
 source .venv/bin/activate
 pip install -U pip
-pip install -r requirements.txt```
+pip install -r requirements.txt
+```
+
+
+### 2) Fetch GitLab docs
+```bash 
+python scripts/fetch_gitlab_docs.py --ref v17.0.0-ee 
+```
+
+### 3) Fetch Ubuntu docs snapshot
+```bash 
+python scripts/fetch_ubuntu_docs.py --snapshot 2026-01-06 --urls data/ubuntu_urls.txt 
+```
+
+### 4) Build chunk corpus JSONL
+```bash 
+python scripts/build_corpus.py --gitlab-ref v17.0.0-ee --ubuntu-snapshot 2026-01-06 
+```
+
+Output: data/corpus/chunks.jsonl
+
+## Build FAISS index
+### 5) Create the vector index
+```bash 
+python scripts/build_faiss_index.py \
+  --corpus data/corpus/chunks.jsonl \
+  --out-dir data/index/bench \
+  --embed-model sentence-transformers/all-MiniLM-L6-v2
+```
+
+Output:
+- data/index/bench/faiss.index
+- data/index/bench/meta.jsonl
+
+## Retrieval-only CLI (product mode)
+The retrieval command prints the top matching passages (with optional reranking).
+
+### 6) Retrieve top docs
+```bash 
+python -m docforge.cli retrieve "How do I use cache in .gitlab-ci.yml?" --k 5 --rerank --rerank-device cuda 
+```
+
+What you’ll see:
+- Query
+- Ranked hits with score
+- Section title + source URL
+- Snippet preview
+- Answering (RAG) with citations via vLLM
+- DocForge can also generate answers using a locally hosted LLM (served like an API).
+
+### 7) Start a local LLM server (vLLM)
+```bash 
+vllm serve Qwen/Qwen2.5-3B-Instruct \
+  --dtype float16 \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --api-key local-token \
+  --max-model-len 3072
+```
+
+### 8) Ask for a cited answer
+
+```bash 
+python -m docforge.cli answer "How do I use cache in .gitlab-ci.yml?" \
+  --k 5 \
+  --rerank \
+  --rerank-device cuda \
+  --llm-base-url http://localhost:8000 \
+  --llm-model Qwen/Qwen2.5-3B-Instruct
+```
+
+
+DocForge will:
+- Retrieve passages
+- (Optionally) rerank with a cross-encoder
+- Generate an answer grounded in passages
+- If citations are missing, it forces a rewrite to add [1] [2] ...
+- Prints a “Sources used” panel mapping [i] → URL
+
+
+
+Quick command summary
+# build
+```bash 
+python scripts/fetch_gitlab_docs.py --ref v17.0.0-ee
+python scripts/fetch_ubuntu_docs.py --snapshot 2026-01-06 --urls data/ubuntu_urls.txt
+python scripts/build_corpus.py --gitlab-ref v17.0.0-ee --ubuntu-snapshot 2026-01-06
+python scripts/build_faiss_index.py --corpus data/corpus/chunks.jsonl --out-dir data/index/bench
+```
+
+# product
+```bash 
+python -m docforge.cli retrieve "..." --k 5 --rerank --rerank-device cuda
+```
+
+# answer (RAG)
+```bash 
+vllm serve Qwen/Qwen2.5-3B-Instruct --dtype float16 --port 8000 --api-key local-token
+python -m docforge.cli answer "..." --k 5 --rerank --rerank-device cuda
+```
