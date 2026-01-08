@@ -51,6 +51,18 @@ def _path_heuristic_boost(meta: Dict[str, Any]) -> float:
 
     return boost
 
+def _content_boost(meta: Dict[str, Any]) -> float:
+    t = (meta.get("text") or "").lower()
+    s = (meta.get("section") or "").lower()
+    boost = 0.0
+    if "gitlab-ci.yml" in t or "gitlab-ci.yml" in s:
+        boost += 0.05
+    if "define the cache" in t or "cache reference" in t:
+        boost += 0.08
+    if "clear the cache" in t:
+        boost -= 0.05
+    return boost
+
 
 class Retriever:
     def __init__(
@@ -87,6 +99,7 @@ class Retriever:
             s = float(score)
             if apply_boosts:
                 s += _path_heuristic_boost(m)
+                s += _content_boost(m)
             results.append(Retrieved(score=s, meta=m, text=m.get("text", "")))
 
         results.sort(key=lambda r: r.score, reverse=True)
@@ -116,3 +129,6 @@ class Retriever:
 
         reranked.sort(key=lambda r: r.score, reverse=True)
         return reranked[:top_k] if top_k else reranked
+    
+    
+
