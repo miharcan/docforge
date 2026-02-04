@@ -1,0 +1,8 @@
+gitlab:
+  repo: "https://gitlab.com/gitlab-org/gitlab.git"
+  ref: "v17.0.0"
+
+ubuntu:
+  source: "help.ubuntu.com"
+  snapshot_date: "2026-01-06"
+

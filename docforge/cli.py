@@ -20,7 +20,7 @@ def _default_index_dir() -> Path:
 
 
 @app.command()
-def main(
+def retrieve(
     query: str = typer.Argument(..., help="User question"),
     k: int = typer.Option(5, help="How many results to show"),
     fetch_k: int = typer.Option(40, help="How many candidates to fetch from FAISS before trimming"),
