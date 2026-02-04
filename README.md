@@ -45,9 +45,14 @@ It is designed to be both:
 python -m venv .venv
 source .venv/bin/activate
 pip install -U pip
-pip install -r requirements.txt
-
+pip install .
 ```
+**(Optional) Install ML dependencies**
+Required only if you want cross-encoder reranking.
+```bash
+pip install .[ml]
+```
+
 
 
 ### 2) Fetch GitLab docs

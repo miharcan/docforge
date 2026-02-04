@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docforge"
+version = "0.1.0"
+description = "Product documentation RAG + retrieval benchmark (GitLab CI + Ubuntu docs)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+authors = [
+  { name = "DocForge Contributors" }
+]
+
+dependencies = [
+  # ----------------------------
+  # Core utilities
+  # ----------------------------
+  "python-dotenv>=1.0",
+  "requests>=2.31",
+  "tqdm>=4.66",
+  "numpy>=1.26",
+
+  # ----------------------------
+  # Text parsing
+  # ----------------------------
+  "beautifulsoup4>=4.12",
+  "lxml>=5.1",
+  "markdown>=3.6",
+
+  # ----------------------------
+  # Retrieval / embeddings
+  # ----------------------------
+  "sentence-transformers>=2.6",
+  "faiss-cpu>=1.7.4",
+
+  # ----------------------------
+  # CLI / UX
+  # ----------------------------
+  "typer>=0.12",
+  "rich>=13.7",
+]
+
+[project.optional-dependencies]
+ml = [
+  "torch>=2.1",
+  "transformers>=4.38",
+]
+
+dev = [
+  "ruff>=0.2",
+  "black>=24.1",
+]
+
+[project.scripts]
+docforge = "docforge.cli:app"
