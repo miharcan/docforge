@@ -1,1 +1,18 @@
 data/raw/**
+
+# Generated corpora and indexes
+data/_work/
+data/corpus/
+data/index/
+
+# Build/package artifacts
+build/
+dist/
+*.egg-info/
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Local/generated helper artifacts
+tree.txt

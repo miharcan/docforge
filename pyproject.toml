@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Product documentation RAG + retrieval benchmark (GitLab CI + Ubuntu docs)"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "MIT"
 
 authors = [
   { name = "DocForge Contributors" }
@@ -29,6 +29,7 @@ dependencies = [
   "beautifulsoup4>=4.12",
   "lxml>=5.1",
   "markdown>=3.6",
+  "vllm>=0.6.0",
 
   # ----------------------------
   # Retrieval / embeddings
@@ -56,3 +57,7 @@ dev = [
 
 [project.scripts]
 docforge = "docforge.cli:app"
+
+
+[tool.setuptools]
+packages = ["docforge"]

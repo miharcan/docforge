@@ -43,6 +43,7 @@ FRONT_MATTER = re.compile(r"\A---\s*\n.*?\n---\s*\n", re.DOTALL)
 HTML_COMMENTS = re.compile(r"<!--.*?-->", re.DOTALL)
 HTML_TAGS = re.compile(r"<[^>]+>")
 
+
 def clean_gitlab_markdown(s: str) -> str:
     s = FRONT_MATTER.sub("", s)
     s = HTML_COMMENTS.sub("", s)
@@ -55,6 +56,7 @@ def clean_gitlab_markdown(s: str) -> str:
 
 MIN_CHARS = 120
 MAX_CHARS = 4000
+
 
 def size_and_split_item(item: Dict[str, Any], min_chars: int = MIN_CHARS, max_chars: int = MAX_CHARS) -> List[Dict[str, Any]]:
     """
